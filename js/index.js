@@ -1,49 +1,34 @@
-'use strict';
-const refs = {
-  days: document.querySelector('.value[data-value="days"]'),
-  hours: document.querySelector('.value[data-value="hours"]'),
-  mins: document.querySelector('.value[data-value="mins"]'),
-  secs: document.querySelector('.value[data-value="secs"]'),
-  timerFace: document.getElementById("timer-1"),
+const colors = [
+  '#FFFFFF',
+  '#2196F3',
+  '#4CAF50',
+  '#FF9800',
+  '#009688',
+  '#795548',
+];
+let timerId = null;
+
+const bodyRef = document.querySelector('body');
+const startBtnRef = document.querySelector('[data-action="start"]');
+const stopBtnRef = document.querySelector('[data-action="stop"]');
+
+const randomIntegerFromInterval = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-class CountdownTimer {
-  constructor({ selector, targetDate }) {
-    this.selector = selector;
-    this.targetDate = targetDate;
-  }
-
-  setInt = setInterval(() => {
-    const nowDate = Date.now();
-    const time = this.targetDate - nowDate;
-    this.updateClockface(time);
-this.timeFinish(time);
-  }, 1000);
-
-  updateClockface(time) {
-    const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
-    const hours = this.pad(
-      Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    );
-    const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
-    const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
-    refs.days.textContent = `${days}`;
-    refs.hours.textContent = `${hours}`;
-    refs.mins.textContent = `${mins}`;
-    refs.secs.textContent = `${secs}`;
-  }
-
-  pad(value) {
-    return String(value).padStart(2, "0");
-  }
-  timeFinish(time) {
-    if (time < 0) {
-      clearInterval(this.setInt);
-      refs.timerFace.textContent = "Finish";
-    }
+const handleClickStart = () => {
+  if (!timerId) {
+    timerId = setInterval(() => {
+      bodyRef.setAttribute(
+        'style',
+        `background-color: ${colors[randomIntegerFromInterval(0, 5)]}`,
+      );
+    }, 500);
   }
 };
-new CountdownTimer({
-  selector: '#timer-1',
-  targetDate: new Date('May 17, 2021'),
-});
+const handleClickStop = () => {
+  clearInterval(timerId);
+  timerId = null;
+};
+startBtnRef.addEventListener('click', handleClickStart);
+stopBtnRef.addEventListener('click', handleClickStop);
